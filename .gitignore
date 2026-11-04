@@ -1,0 +1,21 @@
+# Discos e imágenes de máquinas virtuales: no subir a GitHub
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx
+*.qcow2
+*.ova
+*.ovf
+*.iso
+*.sav
+*.vbox
+*.vmx
+
+# Archivos temporales y de herramientas
+__pycache__/
+*.py[cod]
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+.vscode/

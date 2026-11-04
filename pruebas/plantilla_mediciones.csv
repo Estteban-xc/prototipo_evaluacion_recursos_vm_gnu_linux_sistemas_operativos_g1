@@ -1,0 +1,9 @@
+estado_vm,condicion_servidor,corrida,fecha_hora,distribucion_version,hipervisor,vCPU,RAM_VM_GB,espera_min,memoria_available_MiB,systemd_analyze_time,pagina_abre_localhost,observaciones
+base,detenido,1,,,,,,,,,,
+base,activo,1,,,,,,,,,,
+base,detenido,2,,,,,,,,,,
+base,activo,2,,,,,,,,,,
+ajustado,detenido,1,,,,,,,,,,
+ajustado,activo,1,,,,,,,,,,
+ajustado,detenido,2,,,,,,,,,,
+ajustado,activo,2,,,,,,,,,,

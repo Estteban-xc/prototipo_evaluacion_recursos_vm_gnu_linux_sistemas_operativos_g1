@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portal local del microproyecto de Sistemas Operativos y sus documentos PDF">
+  <title>Portal local | Microproyecto GNU/Linux</title>
+  <style>
+    :root { color-scheme: light; --navy:#16345b; --red:#a70d2d; --bg:#f4f6fa; --ink:#27364a; --muted:#5b6878; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--bg); }
+    header { background:var(--navy); color:white; padding:2.5rem max(1.25rem,calc((100% - 940px)/2)); border-bottom:6px solid var(--red); }
+    header p { margin:.35rem 0 0; color:#e1e9f4; }
+    main { max-width:940px; margin:2rem auto; padding:0 1rem; }
+    section { background:white; border:1px solid #d7deea; border-radius:14px; padding:1.25rem 1.5rem; margin:1rem 0; box-shadow:0 3px 12px #16345b0a; }
+    h1,h2 { color:var(--navy); line-height:1.2; }
+    header h1 { color:white; margin:0; }
+    h2 { font-size:1.25rem; margin-top:0; }
+    .badge { display:inline-block; background:#f9edef; color:var(--red); padding:.25rem .65rem; border-radius:99px; font-weight:700; font-size:.85rem; }
+    ol,ul { padding-left:1.3rem; }
+    a { color:#174f8a; }
+    .links { display:flex; flex-wrap:wrap; gap:.7rem; }
+    .links a { display:inline-block; border:1px solid #c7d3e3; border-radius:9px; padding:.55rem .8rem; text-decoration:none; font-weight:650; }
+    .links a:hover { background:#eef3fa; }
+    code { background:#edf1f6; padding:.12rem .35rem; border-radius:4px; overflow-wrap:anywhere; }
+    footer { max-width:940px; margin:1rem auto 2rem; padding:0 1rem; color:var(--muted); font-size:.9rem; }
+    @media (max-width:600px) { header { padding:1.6rem 1rem; } section { padding:1rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="badge">Disponible solo dentro de esta VM</span>
+    <h1>Portal de consulta del microproyecto</h1>
+    <p>Acceso local al proyecto, sus documentos PDF y la plantilla de mediciones.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Documentos y archivos</h2>
+      <div class="links">
+        <a href="../../README.md">README del proyecto</a>
+        <a href="../../documentacion/descripcion_proyecto.pdf">Descripción del proyecto (PDF)</a>
+        <a href="../../documentacion/requerimientos.pdf">Requerimientos (PDF)</a>
+        <a href="../../documentacion/arquitectura_inicial.pdf">Arquitectura inicial (PDF)</a>
+        <a href="../../documentacion/diagramas/arquitectura_inicial.png">Diagrama de arquitectura</a>
+        <a href="../../documentacion/diagramas/estructura_producto.png">Diagrama de estructura</a>
+        <a href="../../entorno_vm/configuracion_vm.csv">Registro de configuración VM (CSV)</a>
+        <a href="../../pruebas/plantilla_mediciones.csv">Plantilla CSV</a>
+      </div>
+      <p>Los enlaces se resuelven desde el repositorio servido localmente; no requieren acceso a Internet.</p>
+    </section>
+    <section>
+      <h2>¿Qué estamos evaluando?</h2>
+      <p>Observamos los recursos de una VM GNU/Linux y usamos Python 3 para servir temporalmente estos materiales en una página local. Un ajuste opcional de servicio solo se probará si es seguro y reversible. No se supone que vaya a producir ahorro.</p>
+    </section>
+    <section>
+      <h2>Procedimiento de la demostración</h2>
+      <ol>
+        <li>Registrar los recursos de la VM en entorno_vm/configuracion_vm.csv y tomar la medición inicial con el servidor detenido.</li>
+        <li>Desde la raíz del repositorio, iniciar el servidor temporal ligado a <code>127.0.0.1</code>.</li>
+        <li>Abrir <code>http://127.0.0.1:8000/src/codigo_fuente/</code> y comprobar el portal y sus enlaces.</li>
+        <li>Medir memoria mientras el servidor está activo; detenerlo con <code>Ctrl+C</code>.</li>
+        <li>Comparar los datos y explicar lo observado, sin generalizar a otros equipos.</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Comandos de referencia</h2>
+      <p>Memoria: <code>free -h</code></p>
+      <p>Indicador del inicio: <code>systemd-analyze time</code></p>
+      <p>Servidor local (ejecutar desde la raíz del repositorio):</p>
+      <p><code>python3 -m http.server 8000 --bind 127.0.0.1</code></p>
+    </section>
+    <section>
+      <h2>Límites y seguridad</h2>
+      <p>El servidor es temporal y solo escucha en la propia VM. Sirve los archivos del repositorio a localhost; por eso no se deben guardar allí credenciales ni datos personales. No es un sitio público ni un servidor para producción. No usar <code>0.0.0.0</code> ni reenviar puertos. Al finalizar, detenerlo con <code>Ctrl+C</code>.</p>
+    </section>
+    <section>
+      <h2>Equipo</h2>
+      <p>Nelson Julián Martínez Bedoya · Mauricio Esteban Varela Cañón · William David Vivas Maldonado</p>
+      <p>Universidad Manuela Beltrán · Sistemas Operativos</p>
+    </section>
+  </main>
+  <footer>Microproyecto académico · La página es demostrativa y no presenta resultados de medición aún.</footer>
+</body>
+</html>
