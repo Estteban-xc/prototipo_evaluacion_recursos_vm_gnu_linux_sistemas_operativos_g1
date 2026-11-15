@@ -66,27 +66,10 @@ En una medición de arranque independiente, `systemd-analyze time` informó **17
 
 Los registros están en [`pruebas/plantilla_mediciones.csv`](pruebas/plantilla_mediciones.csv). Las pruebas del portal se registran por separado de la comparación del servicio.
 
-## Portal local
+## Portal web local
 
-Desde la raíz del repositorio, inicia el servidor:
+El portal está implementado en `src/codigo_fuente/index.html` y se sirve temporalmente con Python 3 desde la raíz del repositorio. En la VM con Ubuntu 26.10, la comprobación local respondió con estado HTTP 200 y devolvió el contenido HTML esperado. El servidor se limita a la propia máquina virtual y se detiene al finalizar la demostración.
 
-```bash
-python3 -m http.server 8000 --bind 127.0.0.1
-```
-
-En el navegador de la misma VM, abre:
-
-```text
-http://127.0.0.1:8000/src/codigo_fuente/
-```
-
-La petición de prueba al portal devolvió **HTTP 200** y el HTML esperado. En la VM, si `curl` no está instalado, puede verificarse con Python:
-
-```bash
-python3 -c "from urllib.request import urlopen; r=urlopen('http://127.0.0.1:8000/src/codigo_fuente/'); print('HTTP', r.status); print(r.read().decode()[:500])"
-```
-
-Detén el servidor con `Ctrl+C`. No cambies `127.0.0.1` por `0.0.0.0`, no configures reenvío de puertos y no sirvas archivos con credenciales o datos personales.
 
 ## Estructura del repositorio
 
