@@ -50,17 +50,23 @@
     </section>
     <section>
       <h2>¿Qué estamos evaluando?</h2>
-      <p>Observamos los recursos de una VM GNU/Linux y usamos Python 3 para servir temporalmente estos materiales en una página local. Un ajuste opcional de servicio solo se probará si es seguro y reversible. No se supone que vaya a producir ahorro.</p>
+      <p>Observamos recursos de una VM GNU/Linux y usamos Python 3 para servir temporalmente este portal en localhost. También comparamos el sistema con el servicio de descubrimiento de impresoras de red <code>cups-browsed</code> activo y detenido temporalmente. No se modifica el kernel ni se deshabilita el servicio de forma permanente.</p>
     </section>
     <section>
       <h2>Procedimiento de la demostración</h2>
       <ol>
         <li>Registrar los recursos de la VM en entorno_vm/configuracion_vm.csv y tomar la medición inicial con el servidor detenido.</li>
         <li>Desde la raíz del repositorio, iniciar el servidor temporal ligado a <code>127.0.0.1</code>.</li>
-        <li>Abrir <code>http://127.0.0.1:8000/src/codigo_fuente/</code> y comprobar el portal y sus enlaces.</li>
-        <li>Medir memoria mientras el servidor está activo; detenerlo con <code>Ctrl+C</code>.</li>
-        <li>Comparar los datos y explicar lo observado, sin generalizar a otros equipos.</li>
+        <li>Comprobar el portal y sus enlaces desde la propia VM.</li>
+        <li>Registrar memoria con el servidor web detenido y activo, e identificar el proceso Python.</li>
+        <li>Comparar <code>cups-browsed</code> activo y detenido temporalmente, sin deshabilitarlo al inicio.</li>
+        <li>Restaurar el servicio y describir los resultados sin generalizarlos a otros equipos.</li>
       </ol>
+    </section>
+    <section>
+      <h2>Resultados preliminares</h2>
+      <p>En Ubuntu 26.10 instalado persistentemente, una petición local respondió HTTP 200 y el tiempo de arranque registrado fue 17,831 s. El proceso del portal Python presentó RSS de 23 360 KB, 22 496 KB y 22 504 KB en las lecturas compartidas.</p>
+      <p>Para <code>cups-browsed</code>, tres lecturas con el servicio activo mostraron 1097 MiB disponibles y 13 934 592 bytes reportados por <code>MemoryCurrent</code>. Tras detenerlo temporalmente, tres lecturas mostraron 1099 MiB disponibles y <code>MemoryCurrent</code> no establecido. El servicio se reinició y se confirmó activo y habilitado. La diferencia observada fue de 2 MiB disponibles; es modesta y corresponde únicamente a esta VM, sin demostrar una mejora general.</p>
     </section>
     <section>
       <h2>Comandos de referencia</h2>
@@ -79,6 +85,6 @@
       <p>Universidad Manuela Beltrán · Sistemas Operativos</p>
     </section>
   </main>
-  <footer>Microproyecto académico · La página es demostrativa y no presenta resultados de medición aún.</footer>
+  <footer>Microproyecto académico · Portal local de consulta; resultados de una sola VM, limitados a las condiciones de prueba y no generalizables a otros equipos.</footer>
 </body>
 </html>

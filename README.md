@@ -1,110 +1,118 @@
-# Microproyecto: evaluación de recursos GNU/Linux y portal local en una VM
+# Evaluación del consumo de recursos de GNU/Linux antes y después de desactivar servicios no esenciales
 
 **Universidad Manuela Beltrán · Sistemas Operativos · Grupo 1**  
 **Integrantes:** Nelson Julián Martínez Bedoya, Mauricio Esteban Varela Cañón y William David Vivas Maldonado.  
-**Tiempo estimado:** 2–3 días.  
 **Repositorio:** `prototipo_evaluacion_recursos_vm_gnu_linux_sistemas_operativos_g1`
 
-## Descripción contextual y técnica
+## Descripción del microproyecto
 
-El microproyecto se desarrollará en una máquina virtual (VM) GNU/Linux disponible para el equipo. Se registrará la configuración de esa VM y se observarán indicadores básicos de memoria y arranque. Como utilidad práctica, se construirá un portal estático en HTML/CSS que reúne enlaces al README, la documentación del proyecto y los archivos de prueba. La página se servirá temporalmente con Python 3 desde la raíz del repositorio y solo será accesible desde la propia VM, mediante `127.0.0.1`.
+El proyecto evalúa recursos de una máquina virtual GNU/Linux mediante una comparación antes y después de detener temporalmente un servicio que el equipo no utiliza. La prueba se realizó en una instalación persistente de Ubuntu 26.10 dentro de Oracle VirtualBox. Como utilidad complementaria, se implementó un portal estático HTML/CSS que el equipo sirve localmente con Python 3 para consultar los materiales del repositorio.
 
-El producto no es una nueva distribución Linux ni un optimizador automático. No se modifica el kernel. Un cambio en un servicio del sistema es opcional y solo se considerará si el equipo identifica su función y confirma que el cambio es seguro y reversible. No se presupone que las pruebas produzcan ahorro de recursos.
+La prueba del servicio se hizo con `cups-browsed`, que descubre impresoras CUPS de red. El equipo confirmó que no utiliza impresoras. El servicio se detuvo solo durante las lecturas y luego se volvió a iniciar; no se deshabilitó al arranque ni se desinstaló. El propósito es observar y reportar el efecto en esta VM, no prometer ahorros generales ni modificar el kernel.
 
-## Necesidad y problemática
+## Necesidad y objetivo
 
-Para estudiar Sistemas Operativos resulta útil observar procesos y recursos en un entorno realista, pero modificar servicios sin conocer su función puede afectar el funcionamiento del sistema. Además, instalar un servidor web completo o construir una aplicación compleja excedería el tiempo disponible para este microproyecto.
+En un sistema GNU/Linux pueden quedar activos servicios que el usuario no necesita. Sin embargo, detener servicios sin conocer su función puede afectar el sistema. Este microproyecto usa una VM y un cambio temporal, reversible y limitado para observar recursos de forma segura.
 
-La propuesta aborda esa necesidad con una prueba pequeña y aislada: utiliza una VM existente, registra su configuración, sirve un portal estático con herramientas estándar y compara observaciones con el servidor detenido y activo. Los resultados describirán únicamente la VM probada; no se generalizarán a otros equipos.
+**Objetivo:** evaluar el consumo de recursos de una VM GNU/Linux antes y después de detener temporalmente el servicio `cups-browsed`, comprobar que las tareas básicas continúen funcionando y complementar la demostración con un portal web local ligero.
 
-## Objetivo
+## Entorno probado
 
-**Evaluar** el comportamiento de una VM GNU/Linux al ejecutar un portal web local ligero y registrar indicadores básicos del sistema, considerando como opcional un cambio seguro y reversible en un servicio.
+| Elemento | Valor registrado |
+|---|---|
+| Sistema invitado | Ubuntu 26.10 (Stonking Stingray), instalación persistente |
+| Hipervisor | Oracle VirtualBox 7.2.22 r175245 en Windows |
+| CPU virtual | 1 vCPU |
+| Memoria asignada | 2048 MB |
+| Disco virtual | 25 GB (VDI) |
+| Red virtual | NAT |
+| Python | 3.14.8 |
+| systemd | 261.3-0ubuntu3 |
+| Servicio evaluado | `cups-browsed` |
 
-## Funcionalidades principales
+El registro detallado está en [`entorno_vm/configuracion_vm.csv`](entorno_vm/configuracion_vm.csv). No se incluyen la ISO, el disco virtual ni snapshots en el repositorio.
 
-- Registrar distribución, versión, hipervisor y recursos asignados a la VM en `entorno_vm/configuracion_vm.csv`.
-- Mostrar un portal local con enlaces al README, los tres documentos PDF, los diagramas y las plantillas CSV.
-- Servir temporalmente el repositorio con Python 3 en `127.0.0.1`, sin exponerlo a la red local o a Internet.
-- Registrar memoria con `free -h` con el servidor detenido y activo.
-- Registrar el indicador de arranque con `systemd-analyze time`.
-- Guardar las observaciones reales en `pruebas/plantilla_mediciones.csv`.
-- Probar, solo si se justifica y es reversible, un cambio opcional dentro de la VM; restaurar el snapshot local al finalizar.
+## Solución y componentes
 
-## Estructura de trabajo del prototipo
+1. **Máquina virtual:** Ubuntu persistente ejecutado en VirtualBox.
+2. **Evaluación del servicio:** comparación de `cups-browsed` en estado activo y detenido temporalmente, usando `free -m` y `systemctl show`.
+3. **Portal local:** página HTML/CSS en `src/codigo_fuente/index.html`, servida por el módulo estándar `http.server` de Python 3.
+4. **Registro:** configuración y lecturas en archivos CSV dentro de `entorno_vm/` y `pruebas/`.
 
-1. **Preparar el entorno:** seleccionar una VM GNU/Linux existente y anotar su distribución, versión, hipervisor, CPU, memoria, disco y modo de red en `entorno_vm/configuracion_vm.csv`.
-2. **Crear un punto de recuperación:** generar un snapshot local antes de cualquier cambio. El snapshot no se sube al repositorio.
-3. **Tomar la línea base:** con el servidor detenido, ejecutar `free -h` y `systemd-analyze time`; anotar las condiciones en la plantilla de mediciones.
-4. **Ejecutar la utilidad:** iniciar el portal local, abrirlo desde el navegador de la misma VM y comprobar los enlaces a la documentación y los archivos del equipo.
-5. **Medir el uso activo:** mientras el servidor está activo, registrar nuevamente `free -h`; detener el servidor con `Ctrl+C`.
-6. **Analizar y documentar:** comparar las observaciones y explicar sus límites. Si no se identifica un servicio cuyo cambio sea claramente seguro y reversible, no cambiar ninguno.
-7. **Cerrar la prueba:** restaurar el snapshot si hubo modificaciones y guardar capturas reales en `evidencias/capturas/`.
+El portal se limita a `127.0.0.1`; no se expone a la red local ni a Internet.
 
-## Tecnologías y herramientas previstas
+## Procedimiento de la prueba del servicio
 
-- **Sistema operativo:** GNU/Linux con `systemd`, ejecutado como sistema invitado de una VM.
-- **Virtualización:** VirtualBox, VMware o KVM, según la herramienta disponible en el equipo. La configuración usada se anotará en el CSV.
-- **Portal:** HTML y CSS para la página estática.
-- **Servidor local:** Python 3 y el módulo estándar `http.server`; no se requieren frameworks ni bases de datos.
-- **Observación del sistema:** `free -h` para consultar memoria; `systemd-analyze time` para registrar el indicador de arranque; `systemctl` solo para inspeccionar un servicio candidato, si aplica.
-- **Registro de datos:** archivos CSV separados para configuración de la VM y mediciones.
-- **Control de versiones y entrega:** Git y GitHub.
-- **Evidencias:** capturas de pantalla reales guardadas por el equipo en `evidencias/capturas/`.
+Se identificó `cups-browsed` como candidato porque el equipo no usa impresoras. Se tomaron tres lecturas con el servicio activo. Después se ejecutó `sudo systemctl stop cups-browsed.service` y se tomaron tres lecturas mientras estaba detenido. Finalmente se restauró con `sudo systemctl start cups-browsed.service` y se verificó que estuviera `active` y `enabled`.
 
-## Documentación del proyecto
+Comandos de consulta utilizados:
 
-Cada documento cubre un aspecto distinto y se entrega en PDF, sin copias equivalentes en Word o Markdown:
-
-- [Descripción del proyecto](documentacion/descripcion_proyecto.pdf): necesidad, justificación, objetivos, alcance y beneficiarios.
-- [Requerimientos](documentacion/requerimientos.pdf): requisitos funcionales y no funcionales, tecnologías y criterios de aceptación.
-- [Arquitectura inicial](documentacion/arquitectura_inicial.pdf): componentes, estructura del repositorio, flujo de trabajo, configuración y recuperación de la VM.
-
-Los diagramas están en `documentacion/diagramas/` y también se incluyen en el PDF de arquitectura.
-
-## Estructura del repositorio
-
-```text
-prototipo_evaluacion_recursos_vm_gnu_linux_sistemas_operativos_g1/
-├── README.md
-├── LICENSE
-├── .gitignore
-├── documentacion/
-│   ├── descripcion_proyecto.pdf
-│   ├── requerimientos.pdf
-│   ├── arquitectura_inicial.pdf
-│   └── diagramas/
-│       ├── arquitectura_inicial.png
-│       └── estructura_producto.png
-├── entorno_vm/
-│   └── configuracion_vm.csv       # Registro, no imagen de la VM
-├── src/
-│   └── codigo_fuente/
-│       └── index.html             # Portal estático
-├── pruebas/
-│   └── plantilla_mediciones.csv
-└── evidencias/
-    └── capturas/                  # Capturas reales del equipo
+```bash
+free -m
+systemctl show cups-browsed.service -p ActiveState -p MemoryCurrent -p CPUUsageNSec
+systemctl is-active cups-browsed.service
+systemctl is-enabled cups-browsed.service
 ```
 
-Esta organización se adapta al trabajo en una VM: el repositorio conserva la configuración descriptiva y las evidencias, pero no el disco virtual ni los snapshots, que permanecen localmente en el computador de cada integrante. Los archivos de máquinas virtuales e ISO están excluidos en `.gitignore`. No se crea una carpeta genérica de recursos de imágenes porque los diagramas y las capturas ya tienen carpetas específicas.
+`CPUUsageNSec` es un contador acumulado y no se interpretó como consumo de CPU por intervalo. El CSV registra las salidas obtenidas y sus tiempos.
 
-## Ejecutar el portal dentro de la VM
+## Resultados observados
 
-Desde la raíz del repositorio, iniciar el servidor temporal:
+En las tres lecturas con el servicio activo, `free -m` reportó **1097 MiB disponibles** y `MemoryCurrent` reportó **13 934 592 bytes** para el servicio. En las tres lecturas con `cups-browsed` detenido temporalmente, se reportaron **1099 MiB disponibles** y `MemoryCurrent` quedó sin establecer. La diferencia observada de memoria disponible fue de **2 MiB**. El servicio se reinició y se confirmó nuevamente `active` y `enabled`.
+
+El resultado indica que el servicio ocupa memoria mientras está activo y que, en las condiciones observadas, detenerlo coincidió con un aumento pequeño de la memoria disponible. No se concluye que otros servicios produzcan un ahorro mayor ni que el mismo resultado aplique a otros equipos.
+
+En una medición de arranque independiente, `systemd-analyze time` informó **17,831 s**: 1,123 s de kernel, 2,003 s de initrd y 14,705 s de userspace. Esa lectura no se usó para atribuir un cambio en el tiempo de arranque a `cups-browsed`.
+
+Los registros están en [`pruebas/plantilla_mediciones.csv`](pruebas/plantilla_mediciones.csv). Las pruebas del portal se registran por separado de la comparación del servicio.
+
+## Portal local
+
+Desde la raíz del repositorio, inicia el servidor:
 
 ```bash
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-En el navegador de la misma VM abrir:
+En el navegador de la misma VM, abre:
 
 ```text
 http://127.0.0.1:8000/src/codigo_fuente/
 ```
 
-Al terminar, regresar a la terminal del servidor y pulsar `Ctrl+C`. No usar `0.0.0.0`, no reenviar puertos y no publicar el servidor en la red local o en Internet. Antes de servir el repositorio, comprobar que no contenga credenciales ni datos personales.
+La petición de prueba al portal devolvió **HTTP 200** y el HTML esperado. En la VM, si `curl` no está instalado, puede verificarse con Python:
 
-## Repositorio y estado actual
+```bash
+python3 -c "from urllib.request import urlopen; r=urlopen('http://127.0.0.1:8000/src/codigo_fuente/'); print('HTTP', r.status); print(r.read().decode()[:500])"
+```
 
-El repositorio público del equipo se llama `prototipo_evaluacion_recursos_vm_gnu_linux_sistemas_operativos_g1`. La propuesta y las plantillas están organizadas, pero aún no se han registrado mediciones experimentales. El equipo debe completar los CSV con datos reales, añadir sus capturas y registrar los avances posteriores mediante commits propios.
+Detén el servidor con `Ctrl+C`. No cambies `127.0.0.1` por `0.0.0.0`, no configures reenvío de puertos y no sirvas archivos con credenciales o datos personales.
+
+## Estructura del repositorio
+
+```text
+├── README.md
+├── LICENSE
+├── documentacion/
+│   ├── descripcion_proyecto.pdf
+│   ├── requerimientos.pdf
+│   ├── arquitectura_inicial.pdf
+│   └── diagramas/
+├── entorno_vm/
+│   └── configuracion_vm.csv
+├── src/
+│   └── codigo_fuente/
+│       └── index.html
+└── pruebas/
+    └── plantilla_mediciones.csv
+```
+
+La documentación PDF y los diagramas están en `documentacion/`. El portal contiene enlaces locales a los recursos del repositorio.
+
+## Alcance y limitaciones
+
+La evaluación se limita a una VM con una configuración específica y a un solo servicio que el equipo no utiliza. El servicio se detuvo temporalmente y se restauró; no se hizo una desactivación permanente. Las variaciones pequeñas de memoria disponible no se deben generalizar. No se modificó el kernel, no se desactivaron servicios esenciales y no se pretende reemplazar una evaluación de rendimiento controlada en múltiples equipos.
+
+## Estado final
+
+Se verificó la instalación persistente de Ubuntu, el funcionamiento del portal local, la respuesta HTTP 200, la medición independiente del arranque y la comparación de `cups-browsed` activo/detenido. Al finalizar, el servicio quedó activo y habilitado. Para la entrega final, el video técnico debe mostrar el entorno, el procedimiento, los resultados reales y sus limitaciones.

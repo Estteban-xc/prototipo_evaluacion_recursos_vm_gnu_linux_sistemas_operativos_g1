@@ -1,2 +1,2 @@
 fecha,identificador_vm,distribucion,version_so,hipervisor,version_hipervisor,vcpu,ram_gb,disco_virtual_gb,systemd_version,python3_version,navegador,modo_red,snapshot_local
-,,,,,,,,,,,,,
+2026-11-14,Xubuntu SO,Ubuntu,26.10 (Stonking Stingray),Oracle VirtualBox,7.2.22 r175245 (Windows),1,2,25.00,261 (261.3-0ubuntu3),3.14.8,No registrado,NAT,No registrado

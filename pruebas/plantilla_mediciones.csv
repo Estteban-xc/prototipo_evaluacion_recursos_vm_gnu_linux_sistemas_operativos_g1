@@ -1,9 +1,13 @@
-estado_vm,condicion_servidor,corrida,fecha_hora,distribucion_version,hipervisor,vCPU,RAM_VM_GB,espera_min,memoria_available_MiB,systemd_analyze_time,pagina_abre_localhost,observaciones
-base,detenido,1,,,,,,,,,,
-base,activo,1,,,,,,,,,,
-base,detenido,2,,,,,,,,,,
-base,activo,2,,,,,,,,,,
-ajustado,detenido,1,,,,,,,,,,
-ajustado,activo,1,,,,,,,,,,
-ajustado,detenido,2,,,,,,,,,,
-ajustado,activo,2,,,,,,,,,,
+prueba,condicion,replica,fecha_hora,distribucion,version_so,servicio,estado_servicio,servicio_habilitado,memoria_disponible_MiB,memoria_servicio_bytes,python3_RSS_KB,arranque_total_s,resultado_http,observaciones
+portal,activo,1,,Ubuntu,26.10,python3 http.server,activo,,1184,,23360,,HTTP 200,"Portal respondió localmente; hora de lectura no anotada"
+portal,activo,2,,Ubuntu,26.10,python3 http.server,activo,,1184,,22496,,,"Hora e intervalo no anotados"
+portal,activo,3,,Ubuntu,26.10,python3 http.server,activo,,1184,,22504,,,"Hora e intervalo no anotados"
+portal,detenido,1,,Ubuntu,26.10,python3 http.server,detenido,,1184,,,,,"Proceso python3 del servidor no aparece en ps"
+arranque,medicion,1,2026-11-14,Ubuntu,26.10,systemd,,,,,,17.831,No aplica,"systemd-analyze: kernel 1.123 s + initrd 2.003 s + userspace 14.705 s; graphical.target en 14.704 s de userspace"
+servicio,activo,1,2026-11-14T20:31:09-05:00,Ubuntu,26.10,cups-browsed,active,enabled,1097,13934592,,,,"Línea base; servidor web Python detenido"
+servicio,activo,2,2026-11-14T20:32:32-05:00,Ubuntu,26.10,cups-browsed,active,enabled,1097,13934592,,,,"Línea base; MemoryCurrent constante"
+servicio,activo,3,2026-11-14T20:34:15-05:00,Ubuntu,26.10,cups-browsed,active,enabled,1097,13934592,,,,"Línea base; MemoryCurrent constante"
+servicio,detenido,1,2026-11-14T20:35:46-05:00,Ubuntu,26.10,cups-browsed,inactive,enabled,1099,,,,,"Detenido temporalmente con systemctl stop; MemoryCurrent no establecido"
+servicio,detenido,2,2026-11-14T20:37:14-05:00,Ubuntu,26.10,cups-browsed,inactive,enabled,1099,,,,,"Detenido temporalmente; MemoryCurrent no establecido"
+servicio,detenido,3,2026-11-14T20:38:35-05:00,Ubuntu,26.10,cups-browsed,inactive,enabled,1099,,,,,"Detenido temporalmente; MemoryCurrent no establecido"
+restauracion,activo,1,2026-11-14,Ubuntu,26.10,cups-browsed,active,enabled,,,,,,"Servicio reiniciado tras la prueba; is-active=active e is-enabled=enabled"
