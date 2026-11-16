@@ -1,85 +1,112 @@
-# Evaluación del consumo de recursos de GNU/Linux antes y después de desactivar servicios no esenciales
+# Evaluación del consumo de recursos de GNU/Linux antes y después de detener temporalmente un servicio no esencial y desarrollo de un servidor web local en una máquina virtual
 
 **Universidad Manuela Beltrán · Sistemas Operativos · Grupo 1**  
-**Integrantes:** Nelson Julián Martínez Bedoya, Mauricio Esteban Varela Cañón y William David Vivas Maldonado.  
-**Repositorio:** `prototipo_evaluacion_recursos_vm_gnu_linux_sistemas_operativos_g1`
+**Integrantes:** Nelson Julián Martínez Bedoya, Mauricio Esteban Varela Cañón y William David Vivas Maldonado  
+**Repositorio:** [prototipo_evaluacion_recursos_vm_gnu_linux_sistemas_operativos_g1](https://github.com/Estteban-xc/prototipo_evaluacion_recursos_vm_gnu_linux_sistemas_operativos_g1 )
 
 ## Descripción del microproyecto
 
-El proyecto evalúa recursos de una máquina virtual GNU/Linux mediante una comparación antes y después de detener temporalmente un servicio que el equipo no utiliza. La prueba se realizó en una instalación persistente de Ubuntu 26.10 dentro de Oracle VirtualBox. Como utilidad complementaria, se implementó un portal estático HTML/CSS que el equipo sirve localmente con Python 3 para consultar los materiales del repositorio.
+El proyecto evalúa el consumo de recursos de una máquina virtual GNU/Linux mediante la observación del sistema antes y después de detener temporalmente un servicio que el equipo no utiliza. También implementa un portal web estático local para consultar materiales del proyecto.
 
-La prueba del servicio se hizo con `cups-browsed`, que descubre impresoras CUPS de red. El equipo confirmó que no utiliza impresoras. El servicio se detuvo solo durante las lecturas y luego se volvió a iniciar; no se deshabilitó al arranque ni se desinstaló. El propósito es observar y reportar el efecto en esta VM, no prometer ahorros generales ni modificar el kernel.
+La evaluación se realizó en una instalación persistente de Ubuntu 26.10 ejecutada en Oracle VirtualBox. El servicio analizado fue `cups-browsed`, relacionado con el descubrimiento de impresoras CUPS en red. Como el equipo no utiliza impresoras, el servicio se detuvo temporalmente durante las mediciones y se inició nuevamente al finalizar. No se deshabilitó de forma permanente ni se desinstaló.
 
-## Necesidad y objetivo
+El proyecto no modifica el kernel ni plantea una optimización general del sistema. Su propósito es registrar y analizar una intervención pequeña, reversible y limitada a una máquina virtual.
 
-En un sistema GNU/Linux pueden quedar activos servicios que el usuario no necesita. Sin embargo, detener servicios sin conocer su función puede afectar el sistema. Este microproyecto usa una VM y un cambio temporal, reversible y limitado para observar recursos de forma segura.
+## Necesidad y justificación
 
-**Objetivo:** evaluar el consumo de recursos de una VM GNU/Linux antes y después de detener temporalmente el servicio `cups-browsed`, comprobar que las tareas básicas continúen funcionando y complementar la demostración con un portal web local ligero.
+Un sistema GNU/Linux puede mantener activos servicios que no se utilizan en una configuración particular. Sin embargo, detener un servicio sin conocer su función puede afectar otras tareas o componentes del sistema. Por ello, el proyecto utiliza una máquina virtual de prueba, registra su configuración y realiza una comparación reversible de un servicio que el equipo no requiere.
 
-## Entorno probado
+La medición permite observar qué ocurrió en ese entorno específico y documentar sus limitaciones. Los resultados no deben generalizarse a otros equipos, distribuciones o cargas de trabajo.
 
-| Elemento | Valor registrado |
+## Objetivos
+
+### Objetivo general
+
+Evaluar el consumo de recursos de una máquina virtual GNU/Linux antes y después de detener temporalmente el servicio `cups-browsed`, y desarrollar un portal web local para consultar los materiales del microproyecto.
+
+### Objetivos específicos
+
+- Registrar la configuración de hardware y software de la máquina virtual.
+- Observar la memoria disponible y el uso de memoria informado para el servicio mientras está activo y mientras se encuentra detenido temporalmente.
+- Restaurar el servicio al terminar la prueba y verificar que continúe habilitado para el inicio automático.
+- Implementar un portal estático con HTML y CSS, servido localmente con Python 3.
+- Documentar los resultados y sus limitaciones sin atribuir al servicio cambios que no puedan demostrarse.
+
+## Entorno de ejecución
+
+| Elemento | Configuración registrada |
 |---|---|
-| Sistema invitado | Ubuntu 26.10 (Stonking Stingray), instalación persistente |
+| Sistema operativo invitado | Ubuntu 26.10 (Stonking Stingray), instalación persistente |
 | Hipervisor | Oracle VirtualBox 7.2.22 r175245 en Windows |
 | CPU virtual | 1 vCPU |
 | Memoria asignada | 2048 MB |
-| Disco virtual | 25 GB (VDI) |
+| Disco virtual | 25 GB, formato VDI |
 | Red virtual | NAT |
 | Python | 3.14.8 |
-| systemd | 261.3-0ubuntu3 |
+| systemd | 261 (261.3-0ubuntu3) |
 | Servicio evaluado | `cups-browsed` |
 
-El registro detallado está en [`entorno_vm/configuracion_vm.csv`](entorno_vm/configuracion_vm.csv). No se incluyen la ISO, el disco virtual ni snapshots en el repositorio.
+El registro detallado se encuentra en [`entorno_vm/configuracion_vm.csv`](entorno_vm/configuracion_vm.csv). El disco virtual, las ISO y los snapshots de VirtualBox no forman parte del repositorio.
 
-## Solución y componentes
+## Solución implementada
 
-1. **Máquina virtual:** Ubuntu persistente ejecutado en VirtualBox.
-2. **Evaluación del servicio:** comparación de `cups-browsed` en estado activo y detenido temporalmente, usando `free -m` y `systemctl show`.
-3. **Portal local:** página HTML/CSS en `src/codigo_fuente/index.html`, servida por el módulo estándar `http.server` de Python 3.
-4. **Registro:** configuración y lecturas en archivos CSV dentro de `entorno_vm/` y `pruebas/`.
+La solución está compuesta por los siguientes elementos:
 
-El portal se limita a `127.0.0.1`; no se expone a la red local ni a Internet.
+1. **Máquina virtual:** entorno persistente con Ubuntu 26.10 en VirtualBox.
+2. **Evaluación del servicio:** comparación de `cups-browsed` en estado activo y detenido temporalmente, con posterior restauración.
+3. **Portal web local:** página estática desarrollada en `src/codigo_fuente/index.html`, con estructura HTML y estilos CSS.
+4. **Servidor web:** módulo estándar `http.server` de Python 3, utilizado para servir temporalmente los archivos en la interfaz local `127.0.0.1`.
+5. **Registros:** archivos CSV con la configuración de la VM y las mediciones observadas.
 
-## Procedimiento de la prueba del servicio
+El portal se comprobó desde la misma máquina virtual. La solicitud a la página respondió con estado **HTTP 200**. Esta prueba confirma la respuesta de la página principal; no implica por sí sola que todos los enlaces internos hayan sido verificados.
 
-Se identificó `cups-browsed` como candidato porque el equipo no usa impresoras. Se tomaron tres lecturas con el servicio activo. Después se ejecutó `sudo systemctl stop cups-browsed.service` y se tomaron tres lecturas mientras estaba detenido. Finalmente se restauró con `sudo systemctl start cups-browsed.service` y se verificó que estuviera `active` y `enabled`.
+## Metodología resumida
 
-Comandos de consulta utilizados:
+La configuración de la VM se mantuvo constante durante la comparación. Se registraron tres lecturas con `cups-browsed` activo, se detuvo temporalmente el servicio y se registraron tres lecturas adicionales. Después, el servicio se inició nuevamente y se verificó que quedara en estado `active` y `enabled`.
 
-```bash
-free -m
-systemctl show cups-browsed.service -p ActiveState -p MemoryCurrent -p CPUUsageNSec
-systemctl is-active cups-browsed.service
-systemctl is-enabled cups-browsed.service
-```
+La prueba del portal se realizó por separado para no mezclar el consumo del proceso Python con la comparación del servicio. El tiempo de arranque se registró como una observación independiente y no se utilizó para atribuir un cambio de rendimiento a `cups-browsed`.
 
-`CPUUsageNSec` es un contador acumulado y no se interpretó como consumo de CPU por intervalo. El CSV registra las salidas obtenidas y sus tiempos.
+Las mediciones están disponibles en [`pruebas/plantilla_mediciones.csv`](pruebas/plantilla_mediciones.csv).
 
-## Resultados observados
+## Resultados
 
-En las tres lecturas con el servicio activo, `free -m` reportó **1097 MiB disponibles** y `MemoryCurrent` reportó **13 934 592 bytes** para el servicio. En las tres lecturas con `cups-browsed` detenido temporalmente, se reportaron **1099 MiB disponibles** y `MemoryCurrent` quedó sin establecer. La diferencia observada de memoria disponible fue de **2 MiB**. El servicio se reinició y se confirmó nuevamente `active` y `enabled`.
+### Comparación de `cups-browsed`
 
-El resultado indica que el servicio ocupa memoria mientras está activo y que, en las condiciones observadas, detenerlo coincidió con un aumento pequeño de la memoria disponible. No se concluye que otros servicios produzcan un ahorro mayor ni que el mismo resultado aplique a otros equipos.
+| Condición | Lecturas | Memoria disponible | `MemoryCurrent` |
+|---|---:|---:|---:|
+| Servicio activo | 3 | 1097 MiB | 13 934 592 bytes |
+| Servicio detenido temporalmente | 3 | 1099 MiB | No establecido mientras la unidad está inactiva |
 
-En una medición de arranque independiente, `systemd-analyze time` informó **17,831 s**: 1,123 s de kernel, 2,003 s de initrd y 14,705 s de userspace. Esa lectura no se usó para atribuir un cambio en el tiempo de arranque a `cups-browsed`.
+La diferencia observada en memoria disponible fue de **2 MiB**. Es una variación pequeña registrada en esta VM y no demuestra un ahorro estable ni una mejora general. El servicio se inició nuevamente y quedó `active` y `enabled`.
 
-Los registros están en [`pruebas/plantilla_mediciones.csv`](pruebas/plantilla_mediciones.csv). Las pruebas del portal se registran por separado de la comparación del servicio.
+### Portal local
 
-## Portal web local
+La solicitud de prueba al portal respondió **HTTP 200** y devolvió el HTML esperado. El proceso Python registró los siguientes valores de RSS en tres observaciones: **23 360 KB, 22 496 KB y 22 504 KB**. En la lectura registrada con el servidor detenido, el proceso no apareció en la consulta de procesos. La memoria disponible del sistema fue de **1184 MiB** tanto en las lecturas con el portal activo como con el servidor detenido; con estos datos no se observó una variación a la resolución utilizada.
 
-El portal está implementado en `src/codigo_fuente/index.html` y se sirve temporalmente con Python 3 desde la raíz del repositorio. En la VM con Ubuntu 26.10, la comprobación local respondió con estado HTTP 200 y devolvió el contenido HTML esperado. El servidor se limita a la propia máquina virtual y se detiene al finalizar la demostración.
+### Tiempo de arranque
 
+`systemd-analyze time` informó un tiempo total de arranque de **17,831 s**: 1,123 s para el kernel, 2,003 s para initrd y 14,705 s para userspace. Se trata de una medición independiente y única, insuficiente para relacionar el tiempo de inicio con el estado de `cups-browsed`.
+
+## Tecnologías utilizadas
+
+- **Oracle VirtualBox:** virtualización del entorno de prueba.
+- **Ubuntu GNU/Linux:** sistema operativo invitado.
+- **systemd y systemctl:** consulta y control temporal del servicio.
+- **Python 3 y `http.server`:** servidor web local temporal.
+- **HTML y CSS:** implementación del portal.
+- **`free -m` y `systemd-analyze`:** consulta de memoria y registro del tiempo de arranque.
+- **Git y GitHub:** organización y almacenamiento del código y la documentación.
 
 ## Estructura del repositorio
 
+La entrega reúne el código fuente, los archivos de configuración y medición, los diagramas y un único informe consolidado en PDF. El nombre del archivo PDF conserva el título completo del proyecto.
+
 ```text
+.
 ├── README.md
 ├── LICENSE
 ├── documentacion/
-│   ├── descripcion_proyecto.pdf
-│   ├── requerimientos.pdf
-│   ├── arquitectura_inicial.pdf
+│   ├── [informe final consolidado en PDF]
 │   └── diagramas/
 ├── entorno_vm/
 │   └── configuracion_vm.csv
@@ -90,12 +117,22 @@ El portal está implementado en `src/codigo_fuente/index.html` y se sirve tempor
     └── plantilla_mediciones.csv
 ```
 
-La documentación PDF y los diagramas están en `documentacion/`. El portal contiene enlaces locales a los recursos del repositorio.
+El informe final puede consultarse en el [PDF consolidado](documentacion/Evaluaci%C3%B3n%20del%20consumo%20de%20recursos%20de%20GNU-Linux%20antes%20y%20despu%C3%A9s%20de%20detener%20temporalmente%20un%20servicio%20no%20esencial%20y%20desarrollo%20de%20un%20servidor%20web%20local%20en%20una%20m%C3%A1quina%20virtual.pdf).
+
+La VM, su disco virtual y sus snapshots permanecen fuera del repositorio.
 
 ## Alcance y limitaciones
 
-La evaluación se limita a una VM con una configuración específica y a un solo servicio que el equipo no utiliza. El servicio se detuvo temporalmente y se restauró; no se hizo una desactivación permanente. Las variaciones pequeñas de memoria disponible no se deben generalizar. No se modificó el kernel, no se desactivaron servicios esenciales y no se pretende reemplazar una evaluación de rendimiento controlada en múltiples equipos.
+La evaluación corresponde a una sola VM y a un único servicio. No se compararon varias distribuciones, equipos anfitriones, cargas de trabajo ni servicios adicionales. No se realizó una medición controlada de CPU por intervalo ni una prueba de rendimiento con tráfico concurrente.
 
-## Estado final
+La memoria disponible del sistema y `MemoryCurrent` describen indicadores distintos y no son medidas intercambiables. Además, `CPUUsageNSec` es un contador acumulado; las lecturas realizadas no permiten calcular por sí solas una tasa de uso de CPU.
 
-Se verificó la instalación persistente de Ubuntu, el funcionamiento del portal local, la respuesta HTTP 200, la medición independiente del arranque y la comparación de `cups-browsed` activo/detenido. Al finalizar, el servicio quedó activo y habilitado. Para la entrega final, el video técnico debe mostrar el entorno, el procedimiento, los resultados reales y sus limitaciones.
+Por estas razones, los resultados describen únicamente las condiciones observadas. No permiten concluir que detener otros servicios produzca mayores ahorros ni que el mismo efecto ocurra en otros equipos.
+
+## Seguridad
+
+El portal se sirvió únicamente en `127.0.0.1`; no se configuró para escuchar en `0.0.0.0` ni para recibir conexiones mediante reenvío de puertos. El servicio `cups-browsed` se detuvo temporalmente y se restauró al finalizar; no se eliminó ni se deshabilitó permanentemente.
+
+## Licencia
+
+El proyecto se distribuye bajo la licencia MIT. Consulta el archivo [`LICENSE`](LICENSE).
