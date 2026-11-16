@@ -136,3 +136,4 @@ El portal se sirvió únicamente en `127.0.0.1`; no se configuró para escuchar 
 ## Licencia
 
 El proyecto se distribuye bajo la licencia MIT. Consulta el archivo [`LICENSE`](LICENSE).
+
